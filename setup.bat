@@ -1,43 +1,47 @@
 @echo off
 setlocal
 
-REM Aller dans le dossier du script
+:: Aller dans le dossier du script
 cd /d "%~dp0"
 
-REM Créer le venv si nécessaire
+:: Créer le venv si nécessaire
 if not exist myenv (
     python -m venv myenv
 )
 
-REM Activer le venv
+:: Activer le venv
 call myenv\Scripts\activate.bat
 
-REM Installer les dépendances
+:: Installer les dépendances
 pip install -r requirements.txt
 
-REM Créer le fichier .bat de lancement automatique
-set "LAUNCHER=%~dp0launch_server.bat"
-echo @echo off > "%LAUNCHER%"
-echo cd /d "%~dp0" >> "%LAUNCHER%"
-echo call myenv\Scripts\activate.bat >> "%LAUNCHER%"
-echo python serveur.py >> "%LAUNCHER%"
+:: Créer launch_server.bat
+echo @echo off > launch_server.bat
+echo cd /d "%%~dp0" >> launch_server.bat
+echo call myenv\Scripts\activate.bat >> launch_server.bat
+echo python serveur.py >> launch_server.bat
 
-REM Créer la tâche planifiée (Windows)
+:: Créer launch_server.vbs
+echo Set WshShell = CreateObject("WScript.Shell") > launch_server.vbs
+echo WshShell.Run chr(34) ^& "%%~dp0launch_server.bat" ^& chr(34), 0 >> launch_server.vbs
+echo Set WshShell = Nothing >> launch_server.vbs
+
+:: Créer la tâche planifiée silencieuse
 echo.
-echo Creating scheduled task to run Flask server at login...
+echo Creating silent scheduled task to run Flask server at login...
 
 schtasks /Create ^
  /TN "YT-Flask-Server" ^
- /TR "\"%LAUNCHER%\"" ^
+ /TR "\"%~dp0launch_server.vbs\"" ^
  /SC ONLOGON ^
  /RL HIGHEST ^
  /F
 
-REM Lancer la tâche immédiatement
+:: Lancer la tâche maintenant
 echo.
 echo Launching the Flask server task now...
 schtasks /Run /TN "YT-Flask-Server"
 
 echo.
-echo ✅ Setup complete! The server is now running and will launch automatically at login.
+echo ✅ Setup complete! The server is running silently and will start at login.
 pause
