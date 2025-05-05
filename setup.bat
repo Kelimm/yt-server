@@ -33,6 +33,11 @@ schtasks /Create ^
  /RL HIGHEST ^
  /F
 
+REM Lancer la tâche immédiatement
 echo.
-echo ✅ Setup complete! The server will run automatically at login.
+echo Launching the Flask server task now...
+schtasks /Run /TN "YT-Flask-Server"
+
+echo.
+echo ✅ Setup complete! The server is now running and will launch automatically at login.
 pause
