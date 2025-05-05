@@ -1,0 +1,75 @@
+// ==UserScript==
+// @name         Bouton Télécharger YouTube (style natif + spacing)
+// @namespace    http://tampermonkey.net/
+// @version      1.1
+// @description  Ajoute un bouton "Télécharger" avec le même style et espacement que les boutons YouTube natifs (SPA compatible)
+// @author       TonNom
+// @match        https://www.youtube.com/watch*
+// @grant        none
+// ==/UserScript==
+
+(function () {
+    'use strict';
+
+    let bouton = null;
+
+    function isVideoPage() {
+        return location.href.includes('watch');
+    }
+
+    function addButton() {
+        if (bouton) return;
+
+        const targetDiv = document.querySelector('#top-level-buttons-computed');
+        if (!targetDiv) return;
+
+        // Crée le bouton avec les mêmes classes et margin que les autres
+        bouton = document.createElement('button');
+        bouton.className = 'yt-spec-button-shape-next yt-spec-button-shape-next--tonal yt-spec-button-shape-next--mono yt-spec-button-shape-next--size-m';
+        bouton.setAttribute('aria-label', 'Télécharger la vidéo');
+        bouton.style.marginLeft = '8px'; // même espacement que les autres boutons
+
+        const innerSpan = document.createElement('span');
+        innerSpan.className = 'yt-core-attributed-string yt-core-attributed-string--white-space-no-wrap';
+        innerSpan.innerHTML = `
+    <svg style="vertical-align: middle; margin-right: 6px;" height="20" width="20" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M5 20h14v-2H5v2zm7-18v12l5-5h-3V4h-4v5H7l5 5z"/>
+    </svg>
+    Télécharger
+`;
+
+        bouton.appendChild(innerSpan);
+
+        bouton.addEventListener('click', () => {
+            const URL = window.location.href
+            fetch(`http://localhost:5000/download?url=${encodeURIComponent(URL)}`)
+                .then(response => response.text())
+                .then(text => alert(text))
+                .catch(err => alert("Erreur lors du téléchargement : " + err));
+        });
+
+        targetDiv.appendChild(bouton);
+    }
+
+    function removeButton() {
+        if (bouton) {
+            bouton.remove();
+            bouton = null;
+        }
+    }
+
+    let lastUrl = location.href;
+    setInterval(() => {
+        if (location.href !== lastUrl) {
+            lastUrl = location.href;
+            removeButton();
+            if (isVideoPage()) {
+                setTimeout(addButton, 1000);
+            }
+        }
+    }, 500);
+
+    if (isVideoPage()) {
+        setTimeout(addButton, 1000);
+    }
+})();
