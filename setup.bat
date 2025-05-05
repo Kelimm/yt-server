@@ -1,16 +1,38 @@
 @echo off
-cd /d "%USERPROFILE%\DEV\YTB-FLASK-SERVEUR"
+setlocal
 
-:: Créer le venv s'il n'existe pas
+REM Aller dans le dossier du script
+cd /d "%~dp0"
+
+REM Créer le venv si nécessaire
 if not exist myenv (
     python -m venv myenv
 )
 
-:: Activer le venv
+REM Activer le venv
 call myenv\Scripts\activate.bat
 
-:: Installer les dépendances
+REM Installer les dépendances
 pip install -r requirements.txt
 
-:: Lancer le serveur Flask
-python serveur.py
+REM Créer le fichier .bat de lancement automatique
+set "LAUNCHER=%~dp0launch_server.bat"
+echo @echo off > "%LAUNCHER%"
+echo cd /d "%~dp0" >> "%LAUNCHER%"
+echo call myenv\Scripts\activate.bat >> "%LAUNCHER%"
+echo python serveur.py >> "%LAUNCHER%"
+
+REM Créer la tâche planifiée (Windows)
+echo.
+echo Creating scheduled task to run Flask server at login...
+
+schtasks /Create ^
+ /TN "YT-Flask-Server" ^
+ /TR "\"%LAUNCHER%\"" ^
+ /SC ONLOGON ^
+ /RL HIGHEST ^
+ /F
+
+echo.
+echo ✅ Setup complete! The server will run automatically at login.
+pause
