@@ -21,7 +21,7 @@ A lightweight Flask-based local server to download YouTube videos by URL — wit
 ### 🔧 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/yt-downloader-flask.git
+git clone https://github.com/Kelimm/yt-server
 cd yt-downloader-flask
 ```
 
