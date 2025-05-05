@@ -58,12 +58,14 @@ python serveur.py
 
 ---
 
-## 🧩 Tampermonkey Integration 
+### 🧩 3. Install the Tampermonkey YouTube integration (optional)
 
-1. Install the **Tampermonkey** browser extension.
-2. Create a new userscript and paste the code from the `monkey-script` file.
-3. Visit a YouTube video.
-4. Click the "Télécharger" button that appears — the video will be sent to your local server for download.
+1. Install the **Tampermonkey** extension in your browser (Chrome, Firefox, Edge, etc.)
+2. Open the extension and click *“Create a new script”*
+3. Copy and paste the code from the `monkey-script` file in this repository
+4. Save the script and enable it
+5. Visit any YouTube video page
+6. A **"Télécharger"** button will appear near the video — click it to send the video to your local Flask server for download
 
 ---
 
