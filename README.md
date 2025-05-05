@@ -33,7 +33,7 @@ Use the provided script depending on your OS:
 
 **On Windows:**
 ```cmd
-setup.bat
+setup.bat Run as administrator
 ```
 
 **On Linux/macOS:**
