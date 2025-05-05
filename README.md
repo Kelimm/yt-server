@@ -58,7 +58,7 @@ python serveur.py
 
 ---
 
-## 🧩 Tampermonkey Integration (Optional)
+## 🧩 Tampermonkey Integration 
 
 1. Install the **Tampermonkey** browser extension.
 2. Create a new userscript and paste the code from the `monkey-script` file.
